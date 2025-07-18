@@ -244,4 +244,40 @@ module.exports = class PetController {
             res.status(500).json({ message: error.message });
         }
     }
+    
+    // ● Rota DELETE para exclusão de um pet a partir do seu ID (*validar token)
+    
+    static async deletePetById(req, res) {
+        const id = req.params.id;
+
+        // Valida se o ID é válido
+        if (!ObjectId.isValid(id)) {
+            return res.status(422).json({ message: 'ID inválido!' });
+        }
+
+        // Encontra o pet no banco
+        const pet = await Pet.findOne({ _id: id });
+        if (!pet) {
+            return res.status(404).json({ message: 'Pet não encontrado!' });
+        }
+
+        // Pega o usuário que está a tentar remover o pet (a partir do token)
+        const token = getToken(req);
+        const user = await getUserByToken(token);
+
+        // Verifica se o usuário logado é o dono do pet
+        if (pet.user._id.toString() !== user._id.toString()) {
+            return res.status(403).json({ message: 'Acesso negado! Você não é o dono deste pet.' });
+        }
+
+        try {
+           
+        await Pet.findByIdAndDelete(id)
+        res.status(200).json({ message: 'Pet removido com sucesso!' });
+
+        } catch (error) {
+            res.status(500).json({ message: error.message });
+        }
+    }
+
 }

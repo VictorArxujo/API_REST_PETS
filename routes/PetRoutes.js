@@ -15,4 +15,7 @@ router.patch('/update/:id', verifyToken, PetController.updatePetById);
 router.patch('/shoudle/:id', verifyToken, PetController.scheduleVisit);
 router.patch('/conclude/:id', verifyToken, PetController.concludeAdoption);
 
+// Rotas Delete
+router.delete('/delete/:id', verifyToken, PetController.deletePetById);
+
 module.exports = router;

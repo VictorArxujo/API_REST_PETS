@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
+const Pet = require('../models/Pet');
 const createUserToken = require('../helpers/create-user-token');
 const getToken = require('../helpers/get-token');
 const jwt = require('jsonwebtoken');
@@ -214,6 +215,7 @@ module.exports = class UserController {
         }
 
         try {
+            await Pet.deleteMany({ 'user._id': decoded.id });
             await User.deleteOne({ _id: id });
             res.status(200).json({ message: 'Usuário removido com sucesso.' });
         } catch (error) {
